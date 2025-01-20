@@ -19,7 +19,7 @@ async function initialize() {
   await setupTransactionsDb(conn);
 
   const startTimestamp = new Date("2023-01-01").getTime() * 1000;
-  const endTimestamp = new Date("2023-02-01").getTime() * 1000;
+  const endTimestamp = startTimestamp + 3600000000; // +1h
   await populateDb(conn, startTimestamp, endTimestamp);
 
   // Start the server

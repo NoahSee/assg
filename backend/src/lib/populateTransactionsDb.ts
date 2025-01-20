@@ -14,8 +14,15 @@ export default async function populateTransactionsDb(
 
   while (hasMoreRecords) {
     console.log(fromBlock);
-    const records: any = await getTransactions(fromBlock, toBlock);
+    let records: any;
 
+    try {
+      records = await getTransactions(fromBlock, toBlock);
+    } catch (error) {
+      console.error("Failed to get transactions:", error); // Sometimes getting 502 for no reason
+      hasMoreRecords = false;
+      break;
+    }
     if (!records || records.length === 0) {
       hasMoreRecords = false;
       break;
@@ -40,5 +47,8 @@ export default async function populateTransactionsDb(
     await connection.query(query, [values]);
 
     fromBlock = parseInt(records[records.length - 1].blockNumber, 16);
+    if (fromBlock >= toBlock) {
+      hasMoreRecords = false;
+    }
   }
 }
