@@ -39,6 +39,7 @@ Backend
 - Upon startup, it automatically ingests 1h worth of transaction data quickly so theres something to query
 
 * No API validations and error handling in this scenario
+* Exposing the API key, since I need to submit it as well
 
 Additional Notes:
 
