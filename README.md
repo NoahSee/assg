@@ -10,6 +10,13 @@ Open
 http://localhost:3000
 ```
 
+Tests
+
+```bash
+cd backend
+npm run test
+```
+
 Focus was given to the following:
 
 - Working api calls
