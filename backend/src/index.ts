@@ -1,3 +1,4 @@
+import cors from "cors";
 import express, { Request, Response } from "express";
 import getDbConnection from "./lib/getDbConnection";
 import setupRateDb from "./lib/setupRateDb";
@@ -6,11 +7,11 @@ import populateDb from "./lib/populateDb";
 import queryTransactions from "./lib/queryTransactions";
 
 const app = express();
-const port: number = 3000;
+const port: number = 3001;
 
 async function init() {
   // Wait for db to startup
-  await new Promise((resolve) => setTimeout(resolve, 10000));
+  await new Promise((resolve) => setTimeout(resolve, 60000));
   const conn = await getDbConnection();
 
   await setupRateDb(conn);
@@ -19,6 +20,8 @@ async function init() {
   const startTimestamp = new Date("2023-01-01").getTime() * 1000;
   const endTimestamp = startTimestamp + 3600000000; // +1h
   await populateDb(conn, startTimestamp, endTimestamp);
+
+  app.use(cors());
 
   // Default endpoint
   app.get("/", (req: Request, res: Response) => {

@@ -13,7 +13,7 @@ https://api.etherscan.io/api
 https://api.etherscan.io/api
 ?module=block
 &action=getblocknobytime
-&timestamp=1650569060
+&timestamp=1672531200000000
 &closest=before
 &apikey=GIUKDAANZ9BY6GXXYNM8RSSB3JWZNTY4FA
 
@@ -21,12 +21,12 @@ https://api.etherscan.io/api
     ?module=logs
     &action=getLogs
     &address=0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640
-    &fromBlock=0
-    &toBlock=latest
+    &startblock=0xbdd3f3
     &page=1
-    &offset=10
+    &offset=10000
     &apikey=GIUKDAANZ9BY6GXXYNM8RSSB3JWZNTY4FA
 
+https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1h&startTime=1672531200000&endTime=1675209600000&limit=1000
 
 Background 
  
@@ -107,3 +107,10 @@ may contain multiple swaps, you will only need to decode and save the executed p
 Uniswap event. Provide a RESTful API for it. Handy tools include (but are not limited to) 
 o Infura 
 o web3 packages (web.js, web3py etc) 
+
+
+http://localhost:3000/populate-db?startTimestamp=1672531200000000&endTimestamp=1672534800000000
+
+http://localhost:3001/get-transactions?startTimestamp=1672531200000000&endTimestamp=1672534800000000page=2&offset=10
+
+SELECT t.id AS transaction_id, t.hash, t.timestamp, r.close_price, (t.gas_price * t.gas_used / POWER(10, 18)) * r.close_price AS fee_usdt FROM transactions t JOIN rate r ON r.open_time = (SELECT MAX(open_time) FROM rate WHERE open_time <= t.timestamp) LIMIT 10;

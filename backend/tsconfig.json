@@ -12,7 +12,8 @@
 		"outDir": "./build",
 		"module": "commonjs",
 		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true
+		"emitDecoratorMetadata": true,
+		"types": ["jest"]
 	},
 	"include": ["**/*.ts", "*.ts", "src/index.ts", "*.js"],
 	"files": ["src/index.ts"],
