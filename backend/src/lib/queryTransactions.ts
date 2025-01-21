@@ -1,14 +1,12 @@
 import mysql from "mysql2/promise";
 
-export default async function queryTransactions(
-  connection: mysql.Connection,
+export function genSQL(
   startTimestamp: number,
   endTimestamp: number,
   hash: string | undefined | null,
   offset: number,
   page: number
-) {
-  // Convert undefined to null for hash
+): { query: string; params: any[] } {
   const safeHash = hash === undefined ? null : hash;
   const safeLimit = offset;
   const safeCalculatedOffset = (page - 1) * offset;
@@ -33,7 +31,6 @@ export default async function queryTransactions(
 
   const params: any[] = [startTimestamp, endTimestamp];
 
-  // Only add hash condition if hash is not null
   if (safeHash !== null) {
     query += ` AND t.hash = ?`;
     params.push(safeHash);
@@ -47,7 +44,24 @@ export default async function queryTransactions(
 
   params.push(safeLimit, safeCalculatedOffset);
 
-  const [rows] = await connection.query(query, params);
+  return { query, params };
+}
 
+export default async function queryTransactions(
+  connection: mysql.Connection,
+  startTimestamp: number,
+  endTimestamp: number,
+  hash: string | undefined | null,
+  offset: number,
+  page: number
+) {
+  const { query, params } = genSQL(
+    startTimestamp,
+    endTimestamp,
+    hash,
+    offset,
+    page
+  );
+  const [rows] = await connection.query(query, params);
   return rows;
 }

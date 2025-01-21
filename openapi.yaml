@@ -1,0 +1,90 @@
+openapi: 3.0.0
+info:
+  title: Database API
+  version: 1.0.0
+  description: API for populating and querying the database.
+
+servers:
+  - url: http://localhost:3001
+    description: Local server
+
+paths:
+  /populate-db:
+    get:
+      summary: Populate the database with data
+      parameters:
+        - name: startTimestamp
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Start timestamp in microseconds
+        - name: endTimestamp
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: End timestamp in microseconds
+      responses:
+        "200":
+          description: Database populated successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Error populating database
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /get-transactions:
+    get:
+      summary: Retrieve transactions from the database
+      parameters:
+        - name: startTimestamp
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Start timestamp in microseconds
+        - name: endTimestamp
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: End timestamp in microseconds
+        - name: hash
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Transaction hash
+        - name: offset
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Offset for pagination
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Page number for pagination
+      responses:
+        "200":
+          description: Transactions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        "500":
+          description: Error getting transactions
+          content:
+            text/plain:
+              schema:
+                type: string

@@ -12,23 +12,35 @@ const port: number = 3001;
 async function init() {
   // Wait for db to startup
   await new Promise((resolve) => setTimeout(resolve, 60000));
+
+  // Connect to DB
   const conn = await getDbConnection();
 
+  // Setup DB tables
   await setupRateDb(conn);
   await setupTransactionsDb(conn);
 
+  // Populate 1h worth of data
   const startTimestamp = new Date("2023-01-01").getTime() * 1000;
   const endTimestamp = startTimestamp + 3600000000; // +1h
   await populateDb(conn, startTimestamp, endTimestamp);
 
+  // Run populateDb every 1 minute to get live data
+  setInterval(async () => {
+    try {
+      const endTimestamp = Date.now() * 1000; // Current time in microseconds
+      const startTimestamp = endTimestamp - 60000000; // 1 minute ago in microseconds
+
+      await populateDb(conn, startTimestamp, endTimestamp);
+      console.log("Database populated successfully");
+    } catch (error) {
+      console.error(`Error populating database: ${error}`);
+    }
+  }, 60000); // 60000 ms = 1 minute
+
   app.use(cors());
 
-  // Default endpoint
-  app.get("/", (req: Request, res: Response) => {
-    res.send("Hello, World!");
-  });
-
-  // Populate Db
+  // Populate Db API
   app.get("/populate-db", async (req: Request, res: Response) => {
     const startTimestamp = parseInt(req.query.startTimestamp as string, 10);
     const endTimestamp = parseInt(req.query.endTimestamp as string, 10);
@@ -39,7 +51,7 @@ async function init() {
       );
   });
 
-  // Get Transactions
+  // Get Transactions API
   app.get("/get-transactions", async (req: Request, res: Response) => {
     const startTimestamp = parseInt(req.query.startTimestamp as string, 10);
     const endTimestamp = parseInt(req.query.endTimestamp as string, 10);
