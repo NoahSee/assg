@@ -5,7 +5,7 @@ export default async function getEthUsdt(
   endTime: number
 ): Promise<string> {
   console.log("getEthUsdt", startTime, endTime);
-  const url = `https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1d&startTime=${startTime}&endTime=${endTime}&limit=1000
+  const url = `https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1m&startTime=${startTime}&endTime=${endTime}&limit=1000
 `;
 
   try {
